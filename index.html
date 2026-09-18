@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MathMate</title>
+<style>
+:root{--bg:#07111f;--panel:#101d31;--line:#ffffff18;--text:#eef5ff;--muted:#9fb0c7;--a:#7657ff;--b:#00cfff}
+*{box-sizing:border-box} body{margin:0;min-height:100vh;padding:18px;display:grid;place-items:center;font-family:system-ui,sans-serif;color:var(--text);background:radial-gradient(circle at 15% 10%,#7657ff40,transparent 30%),radial-gradient(circle at 85% 85%,#00cfff25,transparent 30%),var(--bg)}
+.app{width:min(920px,100%);height:min(820px,94vh);display:flex;flex-direction:column;overflow:hidden;background:#101d31dd;border:1px solid var(--line);border-radius:26px;box-shadow:0 25px 80px #0008;backdrop-filter:blur(18px)}
+header{padding:23px 26px;display:flex;gap:14px;align-items:center;border-bottom:1px solid var(--line)}
+.logo{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(135deg,var(--a),var(--b));font-size:23px;font-weight:800}
+h1{margin:0;font-size:1.35rem} .sub{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+#chat{flex:1;overflow-y:auto;padding:28px} .msg{max-width:82%;padding:13px 16px;margin-bottom:15px;border-radius:18px;line-height:1.6;white-space:pre-wrap}
+.user{margin-left:auto;background:linear-gradient(135deg,var(--a),#537cff);border-bottom-right-radius:5px}
+.bot{background:#ffffff0b;border:1px solid var(--line);border-bottom-left-radius:5px}
+.composer{padding:17px;border-top:1px solid var(--line)} form{display:flex;gap:10px;padding:6px;border:1px solid var(--line);border-radius:17px;background:#0003}
+input{flex:1;min-width:0;padding:12px;border:0;outline:0;background:transparent;color:var(--text);font-size:1rem} button{border:0;border-radius:13px;padding:0 20px;color:white;font-weight:700;background:linear-gradient(135deg,var(--a),var(--b));cursor:pointer} button:disabled{opacity:.55}
+@media(max-width:600px){body{padding:0}.app{height:100vh;border-radius:0}#chat{padding:18px}.msg{max-width:90%}}
+</style></head>
+<body><main class="app">
+<header><div class="logo">✦</div><div><h1>MathMate</h1><p class="sub">Focused AI learning assistant</p></div></header>
+<section id="chat"><div class="msg bot">Hi! I’m MathMate. Ask me a question related to mathematics, algebra, geometry, calculus, statistics, and problem solving.</div></section>
+<div class="composer"><form id="form"><input id="input" placeholder="Ask your study question..." autocomplete="off" required><button id="send">Send</button></form></div>
+</main>
+<script>
+const f=document.getElementById("form"),i=document.getElementById("input"),c=document.getElementById("chat"),s=document.getElementById("send");
+function add(t,r){const e=document.createElement("div");e.className="msg "+r;e.textContent=t;c.appendChild(e);c.scrollTop=c.scrollHeight}
+f.onsubmit=async e=>{e.preventDefault();const m=i.value.trim();if(!m)return;add(m,"user");i.value="";i.disabled=s.disabled=true;s.textContent="...";
+try{const r=await fetch("/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:m})});const d=await r.json();add(d.reply||d.error||"No response received.","bot")}
+catch{add("Connection error. Please try again.","bot")}finally{i.disabled=s.disabled=false;s.textContent="Send";i.focus()}};
+</script></body></html>
